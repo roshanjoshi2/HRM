@@ -3,6 +3,10 @@
 *@
 @model List<Employee>
 @Model
+
+@{
+    ViewData["Title"] = "Employee";
+}
 @{
 
     <table class="table">
@@ -28,7 +32,7 @@
                 <td>@emp.Sex</td>
                 <td>@emp.Degisnation</td>
                     <td>@emp.Department</td>
-                    <td>@emp.JoiningDate</td>
+                    <td>@emp.JoiningDate.ToString("MMM,dd,yyyy")</td>
             </tr>
         }
           
