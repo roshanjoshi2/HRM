@@ -15,5 +15,11 @@ DOB datetime
 insert into Employee
 values('Roshan Joshi','sankhamul','M','1999/08.17')
 
-select * from Employee;
+insert into Employee
+values('Sita Joshi','sankhamul','F','1999/08.17')
+
+
+select * from Employee
+
+--delete from Employee where ID=3
 
