@@ -1,0 +1,59 @@
+@model List<YourNamespace.Models.Item>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Name</td>
+                <td>@item.Description</td>
+                <td>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#detailsModal-@item.Id">
+                        Details
+                    </button>
+                </td>
+            </tr>
+            
+            <!-- Modal for Details -->
+            <div class="modal fade" id="detailsModal-@item.Id" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="detailsModalLabel">Details</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <ul>
+                                <li><strong>ID:</strong> @item.Id</li>
+                                <li><strong>Name:</strong> @item.Name</li>
+                                <li><strong>Description:</strong> @item.Description</li>
+                                <!-- Add more properties here -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </tbody>
+</table>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('.modal').on('hidden.bs.modal', function () {
+                $(this).find('form')[0].reset();
+            });
+        });
+    </script>
+}
