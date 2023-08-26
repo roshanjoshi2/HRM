@@ -1,59 +1,60 @@
-@model List<YourNamespace.Models.Item>
+@model List<TableRowModel>
 
-<table class="table">
+<table>
     <thead>
         <tr>
             <th>ID</th>
             <th>Name</th>
             <th>Description</th>
-            <th>Actions</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var row in Model)
         {
             <tr>
-                <td>@item.Id</td>
-                <td>@item.Name</td>
-                <td>@item.Description</td>
-                <td>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#detailsModal-@item.Id">
-                        Details
-                    </button>
-                </td>
+                <td>@row.Id</td>
+                <td>@row.Name</td>
+                <td>@row.Description</td>
+                <td><button class="show-modal-btn" data-row="@Json.Serialize(row)">Show Details</button></td>
             </tr>
-            
-            <!-- Modal for Details -->
-            <div class="modal fade" id="detailsModal-@item.Id" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="detailsModalLabel">Details</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <ul>
-                                <li><strong>ID:</strong> @item.Id</li>
-                                <li><strong>Name:</strong> @item.Name</li>
-                                <li><strong>Description:</strong> @item.Description</li>
-                                <!-- Add more properties here -->
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
         }
     </tbody>
 </table>
 
-@section scripts {
-    <script>
-        $(document).ready(function () {
-            $('.modal').on('hidden.bs.modal', function () {
-                $(this).find('form')[0].reset();
-            });
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div id="modal-content"></div>
+    </div>
+</div>
+
+<script>
+    const showModalButtons = document.querySelectorAll('.show-modal-btn');
+    const modal = document.getElementById('myModal');
+    const modalContent = document.getElementById('modal-content');
+    const closeModal = document.querySelector('.close');
+
+    showModalButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const rowData = JSON.parse(button.getAttribute('data-row'));
+            modalContent.innerHTML = `
+                <h2>Row Details</h2>
+                <p>ID: ${rowData.Id}</p>
+                <p>Name: ${rowData.Name}</p>
+                <p>Description: ${rowData.Description}</p>
+            `;
+            modal.style.display = 'block';
         });
-    </script>
-}
+    });
+
+    closeModal.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', event => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+</script>
