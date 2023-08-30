@@ -1,1 +1,1 @@
-asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
