@@ -24,3 +24,16 @@
     <h1>@TempData["error"]</h1>
 
 }
+
+
+
+
+ <div class="col-md-1 col-sm-12 col-xs-12">
+            <div class="form-group field request-from-row ">
+                <select asp-for="Account" id="drop" asp-items="Html.GetEnumSelectList<Account>()"
+                        class="form-select form-select-sm">
+                    <option selected="selected" value="E/I">Select</option>
+                </select>
+
+            </div>
+        </div>
