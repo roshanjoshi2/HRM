@@ -1,50 +1,24 @@
-<!-- Add this code at the end of your view -->
-@if (TempData["SuccessMessage"] != null)
+ <div class="container">
+     <main role="main" class="pb-3">
+         <partial name="_Notification" />
+         @RenderBody()
+     </main>
+ </div>
+
+@if (TempData["Sucess"] != null)
 {
-    <div id="successPopup" class="popup">
-        <div class="popup-content">
-            <span class="close" onclick="closePopup()">&times;</span>
-            <p>@TempData["SuccessMessage"]</p>
-        </div>
-    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script type="text/javascript">
+        toastr.success('@TempData["Sucess"]');
+        </script>
+    
 
-    <script>
-        // JavaScript function to close the popup
-        function closePopup() {
-            var popup = document.getElementById("successPopup");
-            popup.style.display = "none";
-        }
-
-        // Automatically close the popup after a few seconds
-        setTimeout(function () {
-            closePopup();
-        }, 5000); // Change 5000 to the desired duration in milliseconds
-    </script>
 }
+@if (TempData["Error"] != null)
+{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <h1>@TempData["error"]</h1>
 
-
-
-.popup {
-    display: block;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    border: 1px solid #ccc;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    z-index: 9999;
 }
-
-.popup-content {
-    text-align: center;
-}
-
-.close {
-    float: right;
-    font-size: 20px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
