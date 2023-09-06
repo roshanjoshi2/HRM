@@ -1,0 +1,90 @@
+ public byte[] ExportToExcel()
+        {
+            string response = (string)TempData["Response"];
+            TempData.Keep("Response");
+            ResponseVM responsedata = JsonConvert.DeserializeObject<ResponseVM>(response);
+            var data = responsedata.SANCTIONS;
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            var row = 1;
+
+            using (ExcelPackage package = new ExcelPackage())
+            {
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("ExportedData");
+                BuildMatchedSection(worksheet, "Sanctions", responsedata.SANCTIONS);
+                row += 3;
+                BuildMatchedSection(worksheet, "PEP", responsedata.PEP); 
+                row += 3;
+                BuildMatchedSection(worksheet, "AML", responsedata.AML);
+                row += 3;
+                BuildMatchedSection(worksheet, "BLACKLIST", responsedata.BLACKLIST);
+                row += 3;
+                BuildMatchedSection(worksheet, "DEFAULTER", responsedata.DEFAULTER);
+                return package.GetAsByteArray();
+
+            }
+
+            void BuildMatchedSection(ExcelWorksheet worksheet, string matchedType, List<MatchedCase> data)
+            {
+                var head = worksheet.Cells[$"A{row}:T{row}"];
+                head.Merge = true;
+                head.Value = matchedType;
+                head.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                head.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+                head.Style.Font.Bold = true;
+                head.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                head.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Aqua);
+
+                // Set the font color to white for better visibility
+                head.Style.Font.Color.SetColor(System.Drawing.Color.Black);
+                var headers = new string[] { "source", "link", "source description", "percent", "rule", "Key1", "key2", "key3", "name", "address", "city,", "country", "postalcode", "dob", "mobile" };
+                row++;
+                for (var i = 0; i < headers.Length; i++)
+                {
+                    var cell = worksheet.Cells[row, i + 1];
+                    cell.Value = headers[i];
+                    cell.Style.Font.Bold = true;
+
+                }
+                row++;
+                foreach (var product in data)
+                {
+                    worksheet.Cells[row, 1].Value = product.MATCHED_SOURCE;
+                    worksheet.Cells[row, 2].Value = product.MATCHED_LINK;
+                    worksheet.Cells[row, 3].Value = product.MATCHED_SOURCEDESC;
+                    worksheet.Cells[row, 4].Value = product.MATCHED_PERCENTAGE;
+                    worksheet.Cells[row, 5].Value = product.MATCHED_RULENAME;
+                    worksheet.Cells[row, 6].Value = product.MATCHED_KEY1;
+                    worksheet.Cells[row, 7].Value = product.MATCHED_KEY2;
+                    worksheet.Cells[row, 8].Value = product.MATCHED_KEY3;
+                    worksheet.Cells[row, 9].Value = product.MATCHED_NAME;
+                    worksheet.Cells[row, 10].Value = product.MATCHED_ADDRESS1;
+                    worksheet.Cells[row, 11].Value = product.MATCHED_CITY1;
+                    worksheet.Cells[row, 12].Value = product.MATCHED_RESCOUNTRY1;
+                    worksheet.Cells[row, 13].Value = product.MATCHED_POSTCODE1;
+                    worksheet.Cells[row, 14].Value = product.MATCHED_DOB1;
+                    worksheet.Cells[row, 15].Value = product.MATCHED_MOBILE1;
+                    row++;
+                }
+            }
+        }
+
+    }
+
+
+
+
+
+public IActionResult GenerateFile()
+        {
+            // Retrieve the Excel file as a byte array
+            var excelData = ExportToExcel();
+
+            // Set the response headers for downloading the file
+            Response.Headers.Add("Content-Disposition", "attachment; filename=sanctions.xlsx");
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            Response.ContentLength = excelData.Length;
+
+            // Write the Excel byte array directly to the response
+            return File(excelData, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        }
